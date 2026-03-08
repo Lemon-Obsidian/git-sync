@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.8.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.9.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -171,7 +171,7 @@ Pull 중 병합 충돌이 감지되면 자동으로 열립니다.
 
 | 항목 | 설명 | 기본값 |
 |------|------|--------|
-| 기본 브랜치 | Push 및 동기화에 사용할 브랜치. detached HEAD 시 폴백으로도 사용 | `main` |
+| 기본 브랜치 | Push 및 동기화에 사용할 브랜치. detached HEAD / rebase 중단 시 폴백으로도 사용 | `main` |
 | Git 저장소 경로 | Vault 내 Git 저장소의 상대 경로. 비어있으면 Vault 루트 사용 | (비어있음) |
 | Git 실행 파일 경로 | Git 바이너리 절대 경로. 비어있으면 시스템 기본값(`git`) 사용 | (비어있음) |
 
@@ -212,6 +212,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.9.0** | pull 시 rebase 진행 중(REBASE 1/1) 상태 자동 감지 → rebase abort 후 defaultBranch로 복귀 |
 | **1.8.0** | pull 시 detached HEAD 자동 감지 → defaultBranch로 checkout 후 진행 |
 | **1.7.0** | 커맨드 팔레트 표시 이름 재수정 (`full-sync` / `commit-push` / `pull`) |
 | **1.6.0** | 커맨드 팔레트 표시 이름 변경 (`pull` / `commit-push` / `full-sync`) |
