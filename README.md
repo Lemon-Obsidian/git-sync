@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.12.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.12.1-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -208,6 +208,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.12.1** | push 시 브랜치명이 HEAD인 경우 defaultBranch로 폴백하여 push 실패 수정 |
 | **1.12.0** | 에러 발생 시 복사 가능한 에러 모달 추가 — 에러 메시지 전체 표시 + 클립보드 복사 버튼 |
 | **1.11.1** | 충돌 해결 뷰 좌우 패널 정확히 50:50 분할 수정 |
 | **1.11.0** | 충돌 해결 뷰 레이블 정렬 수정 (showPanel 적용) 및 UI 개선 — CONFLICT 배지, 로컬/원격 색상 구분 |
