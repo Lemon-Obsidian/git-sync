@@ -138,7 +138,7 @@ export class GitManager {
             }
         }
 
-        await this.git.raw(["pull", "--rebase"]);
+        await this.git.raw(["pull", "--rebase", "origin", defaultBranch]);
     }
 
     /** Push */
