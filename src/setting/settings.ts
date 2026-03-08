@@ -69,6 +69,21 @@ export class SyncSettingTab extends PluginSettingTab {
                     })
             );
 
+        new Setting(containerEl)
+            .setName("파일 변경 시 자동 커밋 지연 (초)")
+            .setDesc("파일 생성/수정/삭제 후 마지막 변경으로부터 N초 대기 후 자동 커밋 & 동기화합니다. 0이면 비활성화.")
+            .addText((text) =>
+                text
+                    .setValue(String(this.plugin.settings.debounceDelay))
+                    .onChange(async (value) => {
+                        const n = parseInt(value);
+                        if (!isNaN(n) && n >= 0) {
+                            this.plugin.settings.debounceDelay = n;
+                            await this.plugin.saveSettings();
+                        }
+                    })
+            );
+
         // ── 동기화 방식 ──────────────────────────────────────────
         containerEl.createEl("h3", { text: "동기화 방식" });
 

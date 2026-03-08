@@ -8,6 +8,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
     syncMethod: "merge",
     showStatusBar: true,
     showChangedFilesCount: true,
+    debounceDelay: 30,
     basePath: "",
     gitExecutablePath: "",
 };
