@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.9.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.10.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -25,7 +25,7 @@
 | 🚀 **시작 시 Pull** | Obsidian 시작 시 자동으로 최신 상태로 갱신 |
 | ⚔️ **충돌 해결 뷰** | 병합 충돌 발생 시 좌(로컬) · 우(원격) 분할 뷰에서 직접 해결, Accept 버튼 지원 |
 | 📊 **상태 표시바** | 현재 Git 상태 (Idle / Pulling / Pushing / Committing / Conflict) 및 변경 파일 수 표시 |
-| ⚙️ **Pull 방식 선택** | Rebase(기본) / Merge / Reset 중 선택 |
+| ⚙️ **Pull 방식** | Rebase 고정 — 로컬 커밋을 원격 위에 재배치 |
 | 🌿 **기본 브랜치 설정** | Push 및 동기화에 사용할 브랜치 지정, detached HEAD 시 폴백으로도 사용 |
 
 ---
@@ -154,11 +154,7 @@ Pull 중 병합 충돌이 감지되면 자동으로 열립니다.
 
 ### 동기화 방식
 
-| 방식 | 설명 | 기본값 |
-|------|------|:------:|
-| **Rebase** | 로컬 커밋을 원격 위에 재배치 | ✅ |
-| **Merge** | 변경사항을 병합 (충돌 가능) | |
-| **Reset** | 로컬 변경사항을 무시하고 원격으로 덮어쓰기 | |
+Pull 방식은 **Rebase**로 고정되어 있습니다. 로컬 커밋을 원격 위에 재배치하여 깔끔한 히스토리를 유지합니다.
 
 ### 상태 표시바
 
@@ -212,6 +208,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.10.0** | Pull 방식 Rebase 단일 고정 — syncMethod 옵션 제거, 설정 UI 드롭다운 → 안내 텍스트로 교체 |
 | **1.9.0** | pull 시 rebase 진행 중(REBASE 1/1) 상태 자동 감지 → rebase abort 후 defaultBranch로 복귀 |
 | **1.8.0** | pull 시 detached HEAD 자동 감지 → defaultBranch로 checkout 후 진행 |
 | **1.7.0** | 커맨드 팔레트 표시 이름 재수정 (`full-sync` / `commit-push` / `pull`) |
