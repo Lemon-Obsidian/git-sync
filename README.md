@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.12.3-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.13.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -23,7 +23,7 @@
 | 🔄 **자동 커밋 & 동기화** | 설정한 간격마다 자동으로 커밋 → Pull → Push 실행 |
 | ⬇️ **자동 Pull** | 설정한 간격마다 원격 저장소에서 변경사항 자동 수신 |
 | 🚀 **시작 시 Pull** | Obsidian 시작 시 자동으로 최신 상태로 갱신 |
-| ⚔️ **충돌 해결 뷰** | 병합 충돌 발생 시 좌(로컬) · 우(원격) 분할 뷰에서 직접 해결, Accept 버튼 지원 |
+| ⚔️ **충돌 해결 뷰** | 병합 충돌 발생 시 3-way 뷰(좌:로컬 · 중:결과편집 · 우:원격)에서 직접 해결 |
 | 📊 **상태 표시바** | 현재 Git 상태 (Idle / Pulling / Pushing / Committing / Conflict) 및 변경 파일 수 표시 |
 | ⚙️ **Pull 방식** | Rebase 고정 — 로컬 커밋을 원격 위에 재배치 |
 | 🌿 **기본 브랜치 설정** | Push 및 동기화에 사용할 브랜치 지정, detached HEAD 시 폴백으로도 사용 |
@@ -91,8 +91,8 @@ X 버튼 클릭
 Pull 중 병합 충돌 감지
   └─▶ 자동 루틴 즉시 정지
         └─▶ 충돌 해결 뷰 자동 오픈
-              ├─▶ 좌: 로컬(편집 가능) / 우: 원격(읽기 전용)
-              ├─▶ 직접 편집 또는 Accept 버튼으로 청크 선택
+              ├─▶ 좌: 로컬(읽기 전용) / 중앙: 결과(편집 가능) / 우: 원격(읽기 전용)
+              ├─▶ 중앙에서 직접 편집 또는 전체 적용 버튼으로 내용 선택
               └─▶ "해결 완료 및 커밋" 클릭
                     ├─▶ 머지 커밋
                     ├─▶ push
@@ -130,9 +130,10 @@ Pull 중 병합 충돌 감지
 
 Pull 중 병합 충돌이 감지되면 자동으로 열립니다.
 
-- **좌(로컬)**: 내 변경사항 — 직접 편집 가능
-- **우(원격)**: 받아온 변경사항 — 읽기 전용
-- 우측 청크의 **Accept** 버튼으로 원격 변경을 로컬에 적용
+- **좌(로컬)**: 내 변경사항 — 읽기 전용 참조
+- **중앙(결과)**: 최종 내용 직접 편집
+- **우(원격)**: 받아온 변경사항 — 읽기 전용 참조
+- **← 로컬 전체 적용** / **원격 전체 적용 →** 버튼으로 한쪽 내용을 중앙에 일괄 적용
 - 여러 파일이 충돌한 경우 **이전 / 다음** 버튼으로 순서대로 해결
 - 모든 충돌 마커 제거 후 **해결 완료 및 커밋** 버튼 활성화
 
@@ -208,6 +209,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.13.0** | 충돌 해결 뷰 3-way 레이아웃으로 재설계 — 좌(로컬) · 중(결과편집) · 우(원격) |
 | **1.12.3** | push non-fast-forward 실패 시 pull 후 자동 재시도 |
 | **1.12.2** | pull 실패/충돌 시 push 자동 스킵 — non-fast-forward 후 push 시도하던 문제 수정 |
 | **1.12.1** | push 시 브랜치명이 HEAD인 경우 defaultBranch로 폴백하여 push 실패 수정 |
