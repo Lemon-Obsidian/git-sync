@@ -1,6 +1,6 @@
 import { ItemView, Notice, WorkspaceLeaf } from "obsidian";
 import { EditorState } from "@codemirror/state";
-import { EditorView } from "@codemirror/view";
+import { EditorView, showPanel } from "@codemirror/view";
 import { MergeView as CMergeView } from "@codemirror/merge";
 import { MERGE_VIEW_TYPE } from "./constants";
 import type MyGitSync from "./main";
@@ -94,21 +94,22 @@ export class MergeView extends ItemView {
     const header = contentEl.createDiv({ cls: "my-git-sync-merge-header" });
 
     const titleRow = header.createDiv({ cls: "my-git-sync-merge-title-row" });
-    titleRow.createEl("h4", { text: "⚠️ 병합 충돌 해결" });
-    titleRow.createEl("span", {
-      text: `${this.currentIndex + 1} / ${this.conflicts.length}`,
-      cls: "my-git-sync-merge-counter",
-    });
+    const titleLeft = titleRow.createDiv({ cls: "my-git-sync-merge-title-left" });
+    titleLeft.createDiv({ cls: "my-git-sync-merge-title-badge", text: "CONFLICT" });
+    titleLeft.createEl("h4", { text: "병합 충돌 해결" });
 
-    header.createEl("div", {
+    const titleRight = titleRow.createDiv({ cls: "my-git-sync-merge-title-right" });
+    if (this.conflicts.length > 1) {
+      titleRight.createDiv({
+        cls: "my-git-sync-merge-counter",
+        text: `${this.currentIndex + 1} / ${this.conflicts.length} 파일`,
+      });
+    }
+
+    header.createDiv({
       cls: "my-git-sync-merge-filepath",
       text: current.vaultPath,
     });
-
-    // ── 패널 레이블 ────────────────────────────────────────────
-    const labelsRow = contentEl.createDiv({ cls: "my-git-sync-merge-labels" });
-    labelsRow.createDiv({ cls: "my-git-sync-merge-label", text: "로컬 (내 변경사항)" });
-    labelsRow.createDiv({ cls: "my-git-sync-merge-label", text: "원격 (받아온 변경사항)" });
 
     // ── 에디터 ────────────────────────────────────────────────
     const editorContainer = contentEl.createDiv({ cls: "my-git-sync-merge-editor" });
@@ -116,17 +117,18 @@ export class MergeView extends ItemView {
     // ── 하단 버튼 ─────────────────────────────────────────────
     const footer = contentEl.createDiv({ cls: "my-git-sync-merge-footer" });
 
-    const prevBtn = footer.createEl("button", { text: "◀ 이전" });
+    const navGroup = footer.createDiv({ cls: "my-git-sync-merge-nav" });
+    const prevBtn = navGroup.createEl("button", { text: "← 이전" });
     prevBtn.disabled = this.currentIndex === 0;
     prevBtn.addEventListener("click", () => this.navigate(this.currentIndex - 1));
 
-    const nextBtn = footer.createEl("button", { text: "다음 ▶" });
+    const nextBtn = navGroup.createEl("button", { text: "다음 →" });
     nextBtn.disabled = this.currentIndex === this.conflicts.length - 1;
     nextBtn.addEventListener("click", () => this.navigate(this.currentIndex + 1));
 
     const resolveBtn = footer.createEl("button", {
-      text: "해결 완료 및 커밋",
-      cls: "mod-cta",
+      text: "✓ 해결 완료 및 커밋",
+      cls: "mod-cta my-git-sync-resolve-btn",
     });
     resolveBtn.addEventListener("click", () => void this.finish());
 
@@ -148,6 +150,12 @@ export class MergeView extends ItemView {
         doc: oursDoc,
         extensions: [
           EditorView.lineWrapping,
+          showPanel.of(() => {
+            const dom = document.createElement("div");
+            dom.className = "my-git-sync-panel-label my-git-sync-panel-label-local";
+            dom.innerHTML = `<span class="my-git-sync-panel-label-dot"></span>로컬 <span class="my-git-sync-panel-label-sub">(내 변경사항 · 편집 가능)</span>`;
+            return { dom, top: true };
+          }),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               this.updateResolveBtnState(resolveBtn);
@@ -159,6 +167,12 @@ export class MergeView extends ItemView {
         doc: theirsDoc,
         extensions: [
           EditorView.lineWrapping,
+          showPanel.of(() => {
+            const dom = document.createElement("div");
+            dom.className = "my-git-sync-panel-label my-git-sync-panel-label-remote";
+            dom.innerHTML = `<span class="my-git-sync-panel-label-dot"></span>원격 <span class="my-git-sync-panel-label-sub">(받아온 변경사항 · 읽기 전용)</span>`;
+            return { dom, top: true };
+          }),
           EditorState.readOnly.of(true),
         ],
       },
