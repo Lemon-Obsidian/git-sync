@@ -115,9 +115,30 @@ export default class MyGitSync extends Plugin {
             new Notice("✓ Push 완료");
             this.state = GitState.Idle;
         } catch (e) {
+            // non-fast-forward면 pull 후 1회 재시도
+            if (this.isNonFastForward(e)) {
+                new Notice("⚠️ Push 충돌 감지 — Pull 후 재시도합니다.");
+                const pullOk = await this.pull();
+                if (!pullOk) return;
+                try {
+                    await this.gitManager.push();
+                    new Notice("✓ Push 완료 (재시도 성공)");
+                    this.state = GitState.Idle;
+                    return;
+                } catch (e2) {
+                    showError(this, "Push 실패 (재시도)", e2);
+                    this.state = GitState.Idle;
+                    return;
+                }
+            }
             showError(this, "Push 실패", e);
             this.state = GitState.Idle;
         }
+    }
+
+    private isNonFastForward(e: unknown): boolean {
+        const msg = e instanceof Error ? e.message : String(e);
+        return msg.includes("non-fast-forward") || msg.includes("rejected");
     }
 
     async commit(message?: string): Promise<void> {
