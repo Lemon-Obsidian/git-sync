@@ -79,7 +79,7 @@ export default class MyGitSync extends Plugin {
 
     // ── 핵심 git 동작 ─────────────────────────────────────────────
 
-    async pull(): Promise<void> {
+    async pull(): Promise<boolean> {
         this.state = GitState.Pulling;
         let pullError: unknown = null;
 
@@ -93,18 +93,19 @@ export default class MyGitSync extends Plugin {
         const conflicts = await this.gitManager.getConflicts();
         if (conflicts.length > 0) {
             await this.handleConflict(conflicts);
-            return;
+            return false;
         }
 
         if (pullError) {
             showError(this, "Pull 실패", pullError);
             this.state = GitState.Idle;
-            return;
+            return false;
         }
 
         await this.refreshChangedFilesCount();
         new Notice("✓ Pull 완료");
         this.state = GitState.Idle;
+        return true;
     }
 
     async push(): Promise<void> {
@@ -166,8 +167,8 @@ export default class MyGitSync extends Plugin {
      */
     async fullSync(): Promise<void> {
         try {
-            await this.pull();
-            if (this.state === GitState.Conflict) return;
+            const pullOk = await this.pull();
+            if (!pullOk) return;
 
             const hasChanges = await this.gitManager.hasChanges();
             if (hasChanges) {
@@ -196,8 +197,8 @@ export default class MyGitSync extends Plugin {
                 if (this.state === GitState.Conflict) return;
             }
 
-            await this.pull();
-            if (this.state === GitState.Conflict) return;
+            const pullOk = await this.pull();
+            if (!pullOk) return;
 
             await this.push();
         } catch (e) {
