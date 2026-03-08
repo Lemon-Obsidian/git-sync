@@ -138,7 +138,8 @@ export class GitManager {
             }
         }
 
-        await this.git.raw(["pull", "--rebase", "origin", defaultBranch]);
+        await this.git.raw(["fetch", "origin"]);
+        await this.git.raw(["rebase", `origin/${defaultBranch}`]);
     }
 
     /** Push */
