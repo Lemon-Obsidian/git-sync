@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.14.1-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.14.2-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -209,6 +209,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.14.2** | 종료 시 자동 저장 push — `gitManager.push()` 직접 호출 대신 `plugin.push()` 사용으로 non-fast-forward 재시도 로직 적용 |
 | **1.14.1** | 종료 시 자동 저장 — `e.preventDefault()` 비동기 호출 버그 수정 (Electron에서 창 닫기 차단이 작동하지 않던 문제) |
 | **1.14.0** | 충돌 해결 후 rebase 상태이면 `git commit` 대신 `git rebase --continue` 사용 — non-fast-forward push 반복 오류 근본 원인 수정 |
 | **1.13.3** | pull detached HEAD 감지에 `"HEAD"` 문자열 케이스 추가 — main ref 미갱신으로 인한 non-fast-forward 근본 원인 수정 |

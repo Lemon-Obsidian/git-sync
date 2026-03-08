@@ -113,13 +113,7 @@ export class AutomaticsManager {
             );
             return this.plugin.gitManager.commit(msg);
           })
-          .then(() => {
-            new Notice("✓ 커밋 완료, Push 중...", 0);
-            return this.plugin.gitManager.push();
-          })
-          .then(() => {
-            new Notice("✓ Push 완료. 종료합니다.");
-          })
+          .then(() => this.plugin.push())
           .catch((err) => {
             new Notice(`⚠️ 종료 저장 실패: ${err}`);
           })
