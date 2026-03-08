@@ -1,7 +1,6 @@
 import { ItemView, Notice, WorkspaceLeaf } from "obsidian";
 import { EditorState } from "@codemirror/state";
 import { EditorView, showPanel } from "@codemirror/view";
-import { MergeView as CMergeView } from "@codemirror/merge";
 import { MERGE_VIEW_TYPE } from "./constants";
 import type MyGitSync from "./main";
 import type { ConflictFile } from "./types";
@@ -45,18 +44,21 @@ function parseConflictMarkers(content: string): ParsedConflict {
 }
 
 /**
- * 좌우 분할 병합 충돌 해결 뷰.
+ * 3-way 병합 충돌 해결 뷰.
  *
- * @codemirror/merge의 MergeView를 사용한다.
- * - 좌(a): 로컬(ours) — 편집 가능, 최종 결과물
- * - 우(b): 원격(theirs) — 읽기 전용, 참조용
- * - 우측 청크의 "Accept" 버튼으로 원격 변경을 로컬에 적용 가능
+ * 좌(로컬 참조) | 중앙(편집 가능한 결과) | 우(원격 참조)
+ * - 좌/우: 읽기 전용 참조 패널
+ * - 중앙: 최종 결과를 직접 편집하는 패널
+ * - "← 로컬 전체 적용" / "원격 전체 적용 →" 버튼으로 빠르게 적용 가능
  */
 export class MergeView extends ItemView {
   private conflicts: ConflictFile[] = [];
   private currentIndex = 0;
   private resolvedContents: Map<string, string> = new Map();
-  private cmMergeView: CMergeView | null = null;
+
+  private localView: EditorView | null = null;
+  private resultView: EditorView | null = null;
+  private remoteView: EditorView | null = null;
   private conflictCheckInterval?: number;
 
   constructor(leaf: WorkspaceLeaf, private readonly plugin: MyGitSync) {
@@ -68,7 +70,7 @@ export class MergeView extends ItemView {
   getIcon(): string { return "git-merge"; }
 
   async onOpen(): Promise<void> { this.render(); }
-  async onClose(): Promise<void> { this.destroyEditor(); }
+  async onClose(): Promise<void> { this.destroyEditors(); }
 
   setConflicts(conflicts: ConflictFile[]): void {
     this.conflicts = conflicts;
@@ -80,7 +82,7 @@ export class MergeView extends ItemView {
   private render(): void {
     const { contentEl } = this;
     contentEl.empty();
-    this.destroyEditor();
+    this.destroyEditors();
     contentEl.addClass("my-git-sync-merge-view");
 
     if (this.conflicts.length === 0) {
@@ -98,9 +100,8 @@ export class MergeView extends ItemView {
     titleLeft.createDiv({ cls: "my-git-sync-merge-title-badge", text: "CONFLICT" });
     titleLeft.createEl("h4", { text: "병합 충돌 해결" });
 
-    const titleRight = titleRow.createDiv({ cls: "my-git-sync-merge-title-right" });
     if (this.conflicts.length > 1) {
-      titleRight.createDiv({
+      titleRow.createDiv({ cls: "my-git-sync-merge-title-right" }).createDiv({
         cls: "my-git-sync-merge-counter",
         text: `${this.currentIndex + 1} / ${this.conflicts.length} 파일`,
       });
@@ -111,8 +112,11 @@ export class MergeView extends ItemView {
       text: current.vaultPath,
     });
 
-    // ── 에디터 ────────────────────────────────────────────────
+    // ── 에디터 영역 (3-way) ───────────────────────────────────
     const editorContainer = contentEl.createDiv({ cls: "my-git-sync-merge-editor" });
+    const leftPanel   = editorContainer.createDiv({ cls: "my-git-sync-merge-panel" });
+    const centerPanel = editorContainer.createDiv({ cls: "my-git-sync-merge-panel my-git-sync-merge-panel-center" });
+    const rightPanel  = editorContainer.createDiv({ cls: "my-git-sync-merge-panel" });
 
     // ── 하단 버튼 ─────────────────────────────────────────────
     const footer = contentEl.createDiv({ cls: "my-git-sync-merge-footer" });
@@ -126,13 +130,20 @@ export class MergeView extends ItemView {
     nextBtn.disabled = this.currentIndex === this.conflicts.length - 1;
     nextBtn.addEventListener("click", () => this.navigate(this.currentIndex + 1));
 
+    const applyGroup = footer.createDiv({ cls: "my-git-sync-merge-apply" });
+    const applyLocalBtn = applyGroup.createEl("button", { text: "← 로컬 전체 적용" });
+    applyLocalBtn.addEventListener("click", () => this.applyAll("local"));
+
+    const applyRemoteBtn = applyGroup.createEl("button", { text: "원격 전체 적용 →" });
+    applyRemoteBtn.addEventListener("click", () => this.applyAll("remote"));
+
     const resolveBtn = footer.createEl("button", {
       text: "✓ 해결 완료 및 커밋",
       cls: "mod-cta my-git-sync-resolve-btn",
     });
     resolveBtn.addEventListener("click", () => void this.finish());
 
-    // ── CMergeView 생성 ────────────────────────────────────────
+    // ── 문서 내용 ──────────────────────────────────────────────
     let oursDoc: string;
     let theirsDoc: string;
 
@@ -145,15 +156,36 @@ export class MergeView extends ItemView {
       theirsDoc = parsed.theirs;
     }
 
-    this.cmMergeView = new CMergeView({
-      a: {
+    // ── 좌: 로컬 (읽기 전용) ──────────────────────────────────
+    this.localView = new EditorView({
+      state: EditorState.create({
         doc: oursDoc,
         extensions: [
           EditorView.lineWrapping,
+          EditorState.readOnly.of(true),
+          EditorView.theme({ "&": { height: "100%" } }),
           showPanel.of(() => {
             const dom = document.createElement("div");
             dom.className = "my-git-sync-panel-label my-git-sync-panel-label-local";
-            dom.innerHTML = `<span class="my-git-sync-panel-label-dot"></span>로컬 <span class="my-git-sync-panel-label-sub">(내 변경사항 · 편집 가능)</span>`;
+            dom.innerHTML = `<span class="my-git-sync-panel-label-dot"></span>로컬 <span class="my-git-sync-panel-label-sub">(내 변경사항 · 읽기 전용)</span>`;
+            return { dom, top: true };
+          }),
+        ],
+      }),
+      parent: leftPanel,
+    });
+
+    // ── 중앙: 결과 (편집 가능) ────────────────────────────────
+    this.resultView = new EditorView({
+      state: EditorState.create({
+        doc: oursDoc,
+        extensions: [
+          EditorView.lineWrapping,
+          EditorView.theme({ "&": { height: "100%" } }),
+          showPanel.of(() => {
+            const dom = document.createElement("div");
+            dom.className = "my-git-sync-panel-label my-git-sync-panel-label-result";
+            dom.innerHTML = `<span class="my-git-sync-panel-label-dot"></span>결과 <span class="my-git-sync-panel-label-sub">(직접 편집)</span>`;
             return { dom, top: true };
           }),
           EditorView.updateListener.of((update) => {
@@ -162,24 +194,27 @@ export class MergeView extends ItemView {
             }
           }),
         ],
-      },
-      b: {
+      }),
+      parent: centerPanel,
+    });
+
+    // ── 우: 원격 (읽기 전용) ──────────────────────────────────
+    this.remoteView = new EditorView({
+      state: EditorState.create({
         doc: theirsDoc,
         extensions: [
           EditorView.lineWrapping,
+          EditorState.readOnly.of(true),
+          EditorView.theme({ "&": { height: "100%" } }),
           showPanel.of(() => {
             const dom = document.createElement("div");
             dom.className = "my-git-sync-panel-label my-git-sync-panel-label-remote";
             dom.innerHTML = `<span class="my-git-sync-panel-label-dot"></span>원격 <span class="my-git-sync-panel-label-sub">(받아온 변경사항 · 읽기 전용)</span>`;
             return { dom, top: true };
           }),
-          EditorState.readOnly.of(true),
         ],
-      },
-      parent: editorContainer,
-      highlightChanges: true,
-      gutter: true,
-      revertControls: "b-to-a",
+      }),
+      parent: rightPanel,
     });
 
     this.updateResolveBtnState(resolveBtn);
@@ -189,9 +224,19 @@ export class MergeView extends ItemView {
     }, 800);
   }
 
+  private applyAll(source: "local" | "remote"): void {
+    if (!this.resultView || !this.localView || !this.remoteView) return;
+    const content = source === "local"
+      ? this.localView.state.doc.toString()
+      : this.remoteView.state.doc.toString();
+    this.resultView.dispatch({
+      changes: { from: 0, to: this.resultView.state.doc.length, insert: content },
+    });
+  }
+
   private updateResolveBtnState(btn: HTMLButtonElement): void {
-    if (!this.cmMergeView) return;
-    const doc = this.cmMergeView.a.state.doc.toString();
+    if (!this.resultView) return;
+    const doc = this.resultView.state.doc.toString();
     const hasMarkers = doc.includes("<<<<<<<") || doc.includes(">>>>>>>");
     btn.disabled = hasMarkers;
     btn.title = hasMarkers
@@ -207,18 +252,18 @@ export class MergeView extends ItemView {
   }
 
   private saveCurrentContent(): void {
-    if (!this.cmMergeView) return;
+    if (!this.resultView) return;
     const current = this.conflicts[this.currentIndex];
     this.resolvedContents.set(
       current.vaultPath,
-      this.cmMergeView.a.state.doc.toString()
+      this.resultView.state.doc.toString()
     );
   }
 
   private async finish(): Promise<void> {
-    if (!this.cmMergeView) return;
+    if (!this.resultView) return;
 
-    const doc = this.cmMergeView.a.state.doc.toString();
+    const doc = this.resultView.state.doc.toString();
     if (doc.includes("<<<<<<<") || doc.includes(">>>>>>>")) {
       new Notice("아직 충돌 마커가 남아있습니다. 모두 해결 후 시도하세요.");
       return;
@@ -248,12 +293,16 @@ export class MergeView extends ItemView {
     await this.plugin.onConflictResolved(resolved);
   }
 
-  private destroyEditor(): void {
+  private destroyEditors(): void {
     if (this.conflictCheckInterval !== undefined) {
       window.clearInterval(this.conflictCheckInterval);
       this.conflictCheckInterval = undefined;
     }
-    this.cmMergeView?.destroy();
-    this.cmMergeView = null;
+    this.localView?.destroy();
+    this.resultView?.destroy();
+    this.remoteView?.destroy();
+    this.localView = null;
+    this.resultView = null;
+    this.remoteView = null;
   }
 }

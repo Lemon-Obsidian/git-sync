@@ -166,6 +166,12 @@
     border-top: 2px solid var(--color-blue);
 }
 
+.my-git-sync-panel-label-result {
+    color: var(--color-green);
+    background: rgba(var(--color-green-rgb), 0.06);
+    border-top: 2px solid var(--color-green);
+}
+
 .my-git-sync-panel-label-remote {
     color: var(--color-purple);
     background: rgba(var(--color-purple-rgb), 0.06);
@@ -183,6 +189,10 @@
     background: var(--color-blue);
 }
 
+.my-git-sync-panel-label-result .my-git-sync-panel-label-dot {
+    background: var(--color-green);
+}
+
 .my-git-sync-panel-label-remote .my-git-sync-panel-label-dot {
     background: var(--color-purple);
 }
@@ -192,48 +202,39 @@
     opacity: 0.7;
 }
 
-/* ── 에디터 영역 ────────────────────────────────────── */
+/* ── 에디터 영역 (3-way) ────────────────────────────── */
 .my-git-sync-merge-editor {
     flex: 1;
-    overflow: hidden;
     min-height: 0;
-}
-
-.my-git-sync-merge-editor .cm-mergeView {
-    width: 100%;
-    height: 100%;
-}
-
-.my-git-sync-merge-editor .cm-mergeViewEditors {
     display: flex;
-    width: 100%;
-    height: 100%;
+    overflow: hidden;
 }
 
-.my-git-sync-merge-editor .cm-mergeViewEditor {
+.my-git-sync-merge-panel {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-right: 1px solid var(--background-modifier-border);
+}
+
+.my-git-sync-merge-panel:last-child {
+    border-right: none;
+}
+
+.my-git-sync-merge-panel-center {
+    background: var(--background-primary);
+}
+
+.my-git-sync-merge-panel .cm-editor {
+    flex: 1;
+    height: 100%;
     overflow: auto;
 }
 
-.my-git-sync-merge-editor .cm-editor {
-    height: 100%;
-}
-
-/* 충돌 섹션 하이라이트 */
-.my-git-sync-merge-editor .cm-deletedChunk {
-    background-color: rgba(var(--color-red-rgb), 0.1);
-}
-
-.my-git-sync-merge-editor .cm-insertedChunk {
-    background-color: rgba(var(--color-green-rgb), 0.1);
-}
-
-/* Accept 버튼 거터 */
-.my-git-sync-merge-editor .cm-mergeViewGutter {
-    background: var(--background-secondary);
-    border-left: 1px solid var(--background-modifier-border);
-    border-right: 1px solid var(--background-modifier-border);
+.my-git-sync-merge-panel .cm-scroller {
+    overflow: auto;
 }
 
 /* ── 하단 버튼 ─────────────────────────────────────── */
@@ -249,6 +250,11 @@
 }
 
 .my-git-sync-merge-nav {
+    display: flex;
+    gap: 6px;
+}
+
+.my-git-sync-merge-apply {
     display: flex;
     gap: 6px;
 }
