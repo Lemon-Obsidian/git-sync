@@ -38,6 +38,16 @@ export class GitManager {
         }
     }
 
+    /** 현재 브랜치명 반환. detached HEAD면 null 반환 */
+    async getCurrentBranch(): Promise<string | null> {
+        try {
+            const status = await this.git.status();
+            return status.current ?? null;
+        } catch {
+            return null;
+        }
+    }
+
     /** 변경사항이 있는지 확인 */
     async hasChanges(): Promise<boolean> {
         const status = await this.git.status();
@@ -94,8 +104,10 @@ export class GitManager {
         if (method === "rebase") {
             await this.git.raw(["pull", "--rebase"]);
         } else if (method === "reset") {
+            const branch = await this.getCurrentBranch();
+            if (!branch) throw new Error("현재 브랜치를 찾을 수 없습니다 (detached HEAD 상태).");
             await this.git.raw(["fetch"]);
-            await this.git.raw(["reset", "--hard", "FETCH_HEAD"]);
+            await this.git.raw(["reset", "--hard", `origin/${branch}`]);
         } else {
             await this.git.pull();
         }
@@ -103,6 +115,13 @@ export class GitManager {
 
     /** Push */
     async push(): Promise<void> {
+        const branch = await this.getCurrentBranch();
+        if (!branch) {
+            throw new Error(
+                "현재 브랜치를 찾을 수 없습니다 (detached HEAD 상태). " +
+                "터미널에서 'git checkout <브랜치명>'으로 브랜치를 선택한 후 다시 시도하세요."
+            );
+        }
         await this.git.push();
     }
 
