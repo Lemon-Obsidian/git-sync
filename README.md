@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.7.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.8.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -212,6 +212,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.8.0** | pull 시 detached HEAD 자동 감지 → defaultBranch로 checkout 후 진행 |
 | **1.7.0** | 커맨드 팔레트 표시 이름 재수정 (`full-sync` / `commit-push` / `pull`) |
 | **1.6.0** | 커맨드 팔레트 표시 이름 변경 (`pull` / `commit-push` / `full-sync`) |
 | **1.5.0** | pull 실패 시 충돌 해결 뷰 미표시 버그 수정 · `getConflicts()` 파일 읽기 폴백 추가 |
