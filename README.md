@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.2.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.3.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -86,11 +86,11 @@ Pull 중 병합 충돌이 감지되면:
 
 ### 동기화 방식
 
-| 방식 | 설명 |
-|------|------|
-| **Merge** | 변경사항을 병합 (기본값, 충돌 가능) |
-| **Rebase** | 로컬 커밋을 원격 위에 재배치 |
-| **Reset** | 로컬 변경사항을 무시하고 원격으로 덮어쓰기 |
+| 방식 | 설명 | 기본값 |
+|------|------|:------:|
+| **Rebase** | 로컬 커밋을 원격 위에 재배치 | ✅ |
+| **Merge** | 변경사항을 병합 (충돌 가능) | |
+| **Reset** | 로컬 변경사항을 무시하고 원격으로 덮어쓰기 | |
 
 ### 상태 표시바
 
