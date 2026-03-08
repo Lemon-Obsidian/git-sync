@@ -130,9 +130,9 @@ export class GitManager {
             await this.git.raw(["rebase", "--abort"]);
             await this.git.checkout(defaultBranch);
         } else {
-            // detached HEAD 상태면 기본 브랜치로 복귀
+            // detached HEAD 상태면 기본 브랜치로 복귀 (null 또는 "HEAD" 문자열 모두 처리)
             const currentBranch = await this.getCurrentBranch();
-            if (!currentBranch) {
+            if (!currentBranch || currentBranch === "HEAD") {
                 new Notice(`⚠️ Detached HEAD 감지 — '${defaultBranch}' 브랜치로 복귀합니다.`);
                 await this.git.checkout(defaultBranch);
             }
