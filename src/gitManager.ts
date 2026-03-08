@@ -29,6 +29,27 @@ export class GitManager {
         });
     }
 
+    /** git 버전 문자열 반환 */
+    async getGitVersion(): Promise<string> {
+        const raw = await this.git.raw(["--version"]);
+        return raw.trim();
+    }
+
+    /** origin remote URL 반환. 없으면 null */
+    async getRemoteUrl(): Promise<string | null> {
+        try {
+            const url = await this.git.remote(["get-url", "origin"]);
+            return url ? url.trim() : null;
+        } catch {
+            return null;
+        }
+    }
+
+    /** ls-remote 로 remote 연결 테스트. 실패 시 예외 */
+    async testRemoteConnection(): Promise<void> {
+        await this.git.raw(["ls-remote", "--exit-code", "origin", "HEAD"]);
+    }
+
     /** git 저장소가 유효한지 확인 */
     async isRepo(): Promise<boolean> {
         try {

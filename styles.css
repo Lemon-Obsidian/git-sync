@@ -268,3 +268,62 @@
 .my-git-sync-resolve-btn {
     font-weight: 600;
 }
+
+/* ── 연결 진단 모달 ─────────────────────────────────── */
+.my-git-sync-diag-modal {
+    padding: 4px;
+}
+
+.my-git-sync-diag-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.my-git-sync-diag-row {
+    display: grid;
+    grid-template-columns: 110px 24px 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.my-git-sync-diag-row:last-child {
+    border-bottom: none;
+}
+
+.my-git-sync-diag-label {
+    font-size: 0.88em;
+    font-weight: 600;
+    color: var(--text-normal);
+}
+
+.my-git-sync-diag-status {
+    font-size: 0.9em;
+    font-weight: 700;
+    text-align: center;
+}
+
+.my-git-sync-diag-loading {
+    color: var(--text-muted);
+}
+
+.my-git-sync-diag-ok {
+    color: var(--color-green);
+}
+
+.my-git-sync-diag-fail {
+    color: var(--color-red);
+}
+
+.my-git-sync-diag-detail {
+    font-size: 0.82em;
+    font-family: var(--font-monospace);
+    color: var(--text-muted);
+    word-break: break-all;
+}
+
+.my-git-sync-diag-detail-error {
+    color: var(--color-red);
+}

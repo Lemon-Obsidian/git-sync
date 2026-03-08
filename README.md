@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.15.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.16.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -111,6 +111,8 @@ Pull 중 병합 충돌 감지
 | `pull (pull)` | 원격 저장소에서 변경사항 수신 |
 | `commit-push (commit -> push)` | 변경사항 커밋 후 원격 저장소에 Push |
 | `full-sync (전체 동기화, pull -> commit -> push)` | Pull → 커밋 → Push 순서로 전체 동기화 |
+| `push (push)` | 커밋 없이 현재 로컬 커밋을 Push만 실행 |
+| `연결 진단 (connection diagnostic)` | Git 실행파일·저장소·Remote·브랜치·인증 상태 점검 |
 | `자동 루틴 일시정지 / 재개` | 자동 커밋 · Pull 타이머 토글 |
 
 ### 상태 표시바
@@ -209,6 +211,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.16.0** | push 전용 커맨드 추가 · 연결 진단 모달 추가 (Git·저장소·Remote·브랜치·인증 점검) · 설정 탭에 진단 버튼 추가 |
 | **1.15.0** | 커밋 메시지에 변경 파일 목록 추가 — 수정 / 추가 / 삭제 / 이름변경 파일을 한글 레이블로 표시 |
 | **1.14.2** | 종료 시 자동 저장 push — `gitManager.push()` 직접 호출 대신 `plugin.push()` 사용으로 non-fast-forward 재시도 로직 적용 |
 | **1.14.1** | 종료 시 자동 저장 — `e.preventDefault()` 비동기 호출 버그 수정 (Electron에서 창 닫기 차단이 작동하지 않던 문제) |

@@ -1,5 +1,6 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type MyGitSync from "../main";
+import { ConnectionDiagModal } from "../connectionDiagModal";
 
 export class SyncSettingTab extends PluginSettingTab {
     constructor(app: App, private readonly plugin: MyGitSync) {
@@ -158,6 +159,20 @@ export class SyncSettingTab extends PluginSettingTab {
                         this.plugin.settings.gitExecutablePath = value.trim();
                         await this.plugin.saveSettings();
                         await this.plugin.gitManager.init();
+                    })
+            );
+
+        // ── 연결 진단 ──────────────────────────────────────────
+        containerEl.createEl("h3", { text: "연결 진단" });
+
+        new Setting(containerEl)
+            .setName("연결 상태 확인")
+            .setDesc("Git 실행파일, 저장소, Remote URL, 브랜치, 인증 등 연결 관련 항목을 점검합니다.")
+            .addButton((btn) =>
+                btn
+                    .setButtonText("진단 실행")
+                    .onClick(() => {
+                        new ConnectionDiagModal(this.app, this.plugin).open();
                     })
             );
     }
