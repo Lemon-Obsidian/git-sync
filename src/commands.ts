@@ -4,7 +4,7 @@ import { Notice } from "obsidian";
 export function addCommands(plugin: MyGitSync): void {
     plugin.addCommand({
         id: "pull",
-        name: "pull (풀)",
+        name: "pull (pull)",
         callback: () => {
             plugin.promiseQueue.addTask(() => plugin.pull());
         },
@@ -12,7 +12,7 @@ export function addCommands(plugin: MyGitSync): void {
 
     plugin.addCommand({
         id: "commit-and-push",
-        name: "commit-push (커밋하고 Push)",
+        name: "commit-push (commit -> push)",
         callback: () => {
             plugin.promiseQueue.addTask(() => plugin.commitAndPush());
         },
@@ -20,7 +20,7 @@ export function addCommands(plugin: MyGitSync): void {
 
     plugin.addCommand({
         id: "full-sync",
-        name: "full-sync (전체 동기화)",
+        name: "full-sync (전체 동기화, pull -> commit -> push)",
         callback: () => {
             plugin.promiseQueue.addTask(() => plugin.fullSync());
         },
