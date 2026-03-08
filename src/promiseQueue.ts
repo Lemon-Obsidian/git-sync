@@ -7,12 +7,23 @@ type Task = () => Promise<void>;
 export class PromiseQueue {
     private queue: Task[] = [];
     private running = false;
+    private runPromise: Promise<void> = Promise.resolve();
 
     addTask(task: Task): void {
         this.queue.push(task);
         if (!this.running) {
-            void this.run();
+            this.runPromise = this.run();
         }
+    }
+
+    /** 대기 중인 작업을 모두 취소한다. 현재 실행 중인 작업은 완료될 때까지 기다린다. */
+    clear(): void {
+        this.queue = [];
+    }
+
+    /** 현재 실행 중인 작업이 완료될 때까지 기다린다. */
+    async waitForIdle(): Promise<void> {
+        await this.runPromise;
     }
 
     private async run(): Promise<void> {

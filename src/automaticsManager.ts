@@ -92,12 +92,17 @@ export class AutomaticsManager {
       e.preventDefault();
       e.returnValue = "";
 
-      this.plugin.gitManager.hasChanges().then((hasChanges) => {
-        if (this.beforeUnloadHandler) {
-          window.removeEventListener("beforeunload", this.beforeUnloadHandler);
-          this.beforeUnloadHandler = undefined;
-        }
+      if (this.beforeUnloadHandler) {
+        window.removeEventListener("beforeunload", this.beforeUnloadHandler);
+        this.beforeUnloadHandler = undefined;
+      }
 
+      // 대기 중인 큐 작업을 취소하고, 현재 실행 중인 작업이 완료될 때까지 기다린다.
+      // (실행 중인 git 프로세스를 강제 종료하면 "Pull 실패" 등의 오류 Notice가 뜨는 것을 방지)
+      this.plugin.promiseQueue.clear();
+      this.plugin.promiseQueue.waitForIdle().then(() => {
+        return this.plugin.gitManager.hasChanges();
+      }).then((hasChanges) => {
         if (!hasChanges) {
           window.close();
           return;
