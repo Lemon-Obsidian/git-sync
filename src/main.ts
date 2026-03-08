@@ -281,9 +281,23 @@ export default class MyGitSync extends Plugin {
                 await this.gitManager.stageFile(file.repoPath);
             }
 
-            // 머지 커밋
-            await this.gitManager.commit("병합 충돌 해결");
-            await this.gitManager.push();
+            // rebase 중이면 rebase --continue, 아니면 일반 머지 커밋
+            if (this.gitManager.isRebasing()) {
+                try {
+                    await this.gitManager.rebaseContinue();
+                } catch {
+                    // rebase --continue 후 추가 충돌 확인
+                }
+                const moreConflicts = await this.gitManager.getConflicts();
+                if (moreConflicts.length > 0) {
+                    await this.handleConflict(moreConflicts);
+                    return;
+                }
+            } else {
+                await this.gitManager.commit("병합 충돌 해결");
+            }
+
+            await this.push();
 
             this.state = GitState.Idle;
             this.automaticsManager.resume();

@@ -142,6 +142,11 @@ export class GitManager {
         await this.git.raw(["rebase", `origin/${defaultBranch}`]);
     }
 
+    /** Rebase 계속 진행 (충돌 해결 후 호출) */
+    async rebaseContinue(): Promise<void> {
+        await this.git.raw(["-c", "core.editor=true", "rebase", "--continue"]);
+    }
+
     /** Push */
     async push(): Promise<void> {
         const branch = await this.getCurrentBranch();
