@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.1.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.2.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -23,7 +23,7 @@
 | 🔄 **자동 커밋 & 동기화** | 설정한 간격마다 자동으로 커밋 → Pull → Push 실행 |
 | ⬇️ **자동 Pull** | 설정한 간격마다 원격 저장소에서 변경사항 자동 수신 |
 | 🚀 **시작 시 Pull** | Obsidian 시작 시 자동으로 최신 상태로 갱신 |
-| ⚔️ **충돌 해결 뷰** | 병합 충돌 발생 시 좌우 비교 뷰에서 직접 해결 |
+| ⚔️ **충돌 해결 뷰** | 병합 충돌 발생 시 좌(로컬) · 우(원격) 분할 뷰에서 직접 해결, Accept 버튼 지원 |
 | 📊 **상태 표시바** | 현재 Git 상태 (Idle / Pulling / Pushing / Conflict) 및 변경 파일 수 표시 |
 | ⚙️ **Pull 방식 선택** | Merge / Rebase / Reset 중 선택 |
 
@@ -65,7 +65,7 @@ Pull 중 병합 충돌이 감지되면:
 
 1. 자동 루틴이 즉시 정지됨
 2. 충돌 해결 뷰가 자동으로 열림
-3. 좌(원격) · 우(로컬) 비교 뷰에서 내용 수정 후 **해결 완료** 클릭
+3. 좌(로컬) · 우(원격) 분할 뷰에서 직접 편집하거나 우측 **Accept** 버튼으로 원격 변경 적용
 4. 머지 커밋 → Push → 자동 루틴 자동 재개
 
 ---
