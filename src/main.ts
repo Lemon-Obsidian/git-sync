@@ -83,7 +83,7 @@ export default class MyGitSync extends Plugin {
         let pullError: unknown = null;
 
         try {
-            await this.gitManager.pull(this.settings.syncMethod);
+            await this.gitManager.pull();
         } catch (e) {
             pullError = e;
         }

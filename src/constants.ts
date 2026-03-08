@@ -5,7 +5,6 @@ export const DEFAULT_SETTINGS: PluginSettings = {
     autoCommitInterval: 5,
     autoPullInterval: 10,
     commitMessage: "vault 백업: {{date}}",
-    syncMethod: "rebase",
     showStatusBar: true,
     showChangedFilesCount: true,
     debounceDelay: 30,

@@ -5,9 +5,6 @@ export interface PluginSettings {
     autoPullInterval: number;    // 분, 0이면 비활성화
     commitMessage: string;       // 커밋 메시지 템플릿 ({{date}} 지원)
 
-    // 동기화 방식
-    syncMethod: "merge" | "rebase" | "reset";
-
     // 상태 표시바
     showStatusBar: boolean;
     showChangedFilesCount: boolean;

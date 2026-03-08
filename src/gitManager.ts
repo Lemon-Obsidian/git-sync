@@ -121,7 +121,7 @@ export class GitManager {
      * 충돌 발생 시 simple-git이 예외를 던진다.
      * 호출부에서 catch 후 getConflicts()로 충돌 파일을 확인해야 한다.
      */
-    async pull(method: "merge" | "rebase" | "reset"): Promise<void> {
+    async pull(): Promise<void> {
         const defaultBranch = this.plugin.settings.defaultBranch;
 
         // rebase 진행 중이면 abort 후 기본 브랜치로 복귀
@@ -138,15 +138,7 @@ export class GitManager {
             }
         }
 
-        if (method === "rebase") {
-            await this.git.raw(["pull", "--rebase"]);
-        } else if (method === "reset") {
-            const branch = await this.getCurrentBranch() ?? this.plugin.settings.defaultBranch;
-            await this.git.raw(["fetch"]);
-            await this.git.raw(["reset", "--hard", `origin/${branch}`]);
-        } else {
-            await this.git.pull();
-        }
+        await this.git.raw(["pull", "--rebase"]);
     }
 
     /** Push */

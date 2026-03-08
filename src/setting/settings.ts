@@ -89,22 +89,7 @@ export class SyncSettingTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName("Pull 방식")
-            .setDesc(
-                "Merge: 변경사항을 병합합니다 (기본값, 충돌 가능).\n" +
-                "Rebase: 로컬 커밋을 원격 위에 재배치합니다.\n" +
-                "Reset: 로컬 변경사항을 무시하고 원격으로 덮어씁니다."
-            )
-            .addDropdown((dropdown) =>
-                dropdown
-                    .addOption("merge", "Merge")
-                    .addOption("rebase", "Rebase")
-                    .addOption("reset", "Reset (강제 덮어쓰기)")
-                    .setValue(this.plugin.settings.syncMethod)
-                    .onChange(async (value) => {
-                        this.plugin.settings.syncMethod = value as "merge" | "rebase" | "reset";
-                        await this.plugin.saveSettings();
-                    })
-            );
+            .setDesc("Rebase — 로컬 커밋을 원격 위에 재배치합니다.");
 
         // ── 상태 표시바 ──────────────────────────────────────────
         containerEl.createEl("h3", { text: "상태 표시바" });
