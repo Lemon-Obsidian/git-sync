@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.4.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.5.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -212,6 +212,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.5.0** | pull 실패 시 충돌 해결 뷰 미표시 버그 수정 · `getConflicts()` 파일 읽기 폴백 추가 |
 | **1.4.0** | 기본 브랜치 설정 추가 (기본값: `main`) · detached HEAD 시 설정 브랜치로 폴백 |
 | **1.3.0** | detached HEAD 에러 처리 · reset 방식 pull 수정 · 기본 병합 방식 rebase로 변경 |
 | **1.2.0** | 충돌 해결 뷰 좌우 분할 패널로 변경 (unifiedMergeView → MergeView) |
