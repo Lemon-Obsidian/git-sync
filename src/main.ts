@@ -131,8 +131,52 @@ export default class MyGitSync extends Plugin {
         }
     }
 
+    /** 커밋 → Push */
+    async commitAndPush(): Promise<void> {
+        try {
+            const hasChanges = await this.gitManager.hasChanges();
+            if (!hasChanges) {
+                new Notice("커밋할 변경사항이 없습니다.");
+                return;
+            }
+            await this.commit();
+            if (this.state === GitState.Conflict) return;
+
+            await this.push();
+        } catch (e) {
+            new Notice(`커밋 & Push 실패: ${e}`);
+            if (this.state !== GitState.Conflict) {
+                this.state = GitState.Idle;
+            }
+        }
+    }
+
     /**
-     * 커밋 → Pull → Push 순서로 동기화.
+     * Pull → 커밋 → Push 순서로 전체 동기화.
+     * 충돌 발생 시 즉시 중단하고 merge view를 연다.
+     */
+    async fullSync(): Promise<void> {
+        try {
+            await this.pull();
+            if (this.state === GitState.Conflict) return;
+
+            const hasChanges = await this.gitManager.hasChanges();
+            if (hasChanges) {
+                await this.commit();
+                if (this.state === GitState.Conflict) return;
+            }
+
+            await this.push();
+        } catch (e) {
+            new Notice(`전체 동기화 실패: ${e}`);
+            if (this.state !== GitState.Conflict) {
+                this.state = GitState.Idle;
+            }
+        }
+    }
+
+    /**
+     * 커밋 → Pull → Push (자동 루틴 내부용).
      * 충돌 발생 시 즉시 중단하고 merge view를 연다.
      */
     async commitAndSync(): Promise<void> {

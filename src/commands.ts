@@ -1,5 +1,5 @@
-import { Notice } from "obsidian";
 import type MyGitSync from "./main";
+import { Notice } from "obsidian";
 
 export function addCommands(plugin: MyGitSync): void {
     plugin.addCommand({
@@ -11,26 +11,18 @@ export function addCommands(plugin: MyGitSync): void {
     });
 
     plugin.addCommand({
-        id: "push",
-        name: "푸시 (Push)",
+        id: "commit-and-push",
+        name: "커밋하고 Push",
         callback: () => {
-            plugin.promiseQueue.addTask(() => plugin.push());
+            plugin.promiseQueue.addTask(() => plugin.commitAndPush());
         },
     });
 
     plugin.addCommand({
-        id: "commit",
-        name: "커밋 (Commit)",
+        id: "full-sync",
+        name: "전체 동기화 (Pull → 커밋 → Push)",
         callback: () => {
-            plugin.promiseQueue.addTask(() => plugin.commit());
-        },
-    });
-
-    plugin.addCommand({
-        id: "commit-and-sync",
-        name: "커밋하고 동기화",
-        callback: () => {
-            plugin.promiseQueue.addTask(() => plugin.commitAndSync());
+            plugin.promiseQueue.addTask(() => plugin.fullSync());
         },
     });
 
