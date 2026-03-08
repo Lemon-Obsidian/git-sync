@@ -1,0 +1,151 @@
+import { App, PluginSettingTab, Setting } from "obsidian";
+import type MyGitSync from "../main";
+
+export class SyncSettingTab extends PluginSettingTab {
+    constructor(app: App, private readonly plugin: MyGitSync) {
+        super(app, plugin);
+    }
+
+    display(): void {
+        const { containerEl } = this;
+        containerEl.empty();
+
+        containerEl.createEl("h2", { text: "Git 동기화 설정" });
+
+        // ── 자동 동기화 ──────────────────────────────────────────
+        containerEl.createEl("h3", { text: "자동 동기화" });
+
+        new Setting(containerEl)
+            .setName("시작 시 자동 Pull")
+            .setDesc("Obsidian 시작 시 자동으로 원격 저장소에서 변경사항을 가져옵니다.")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.autoPullOnBoot)
+                    .onChange(async (value) => {
+                        this.plugin.settings.autoPullOnBoot = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("자동 커밋 간격 (분)")
+            .setDesc("설정한 분마다 자동으로 커밋하고 동기화합니다. 0이면 비활성화.")
+            .addText((text) =>
+                text
+                    .setValue(String(this.plugin.settings.autoCommitInterval))
+                    .onChange(async (value) => {
+                        const n = parseInt(value);
+                        if (!isNaN(n) && n >= 0) {
+                            this.plugin.settings.autoCommitInterval = n;
+                            await this.plugin.saveSettings();
+                        }
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("자동 Pull 간격 (분)")
+            .setDesc("설정한 분마다 자동으로 Pull합니다. 0이면 비활성화.")
+            .addText((text) =>
+                text
+                    .setValue(String(this.plugin.settings.autoPullInterval))
+                    .onChange(async (value) => {
+                        const n = parseInt(value);
+                        if (!isNaN(n) && n >= 0) {
+                            this.plugin.settings.autoPullInterval = n;
+                            await this.plugin.saveSettings();
+                        }
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("커밋 메시지")
+            .setDesc("커밋 메시지 템플릿. {{date}}는 현재 날짜/시간으로 대체됩니다.")
+            .addText((text) =>
+                text
+                    .setValue(this.plugin.settings.commitMessage)
+                    .onChange(async (value) => {
+                        this.plugin.settings.commitMessage = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        // ── 동기화 방식 ──────────────────────────────────────────
+        containerEl.createEl("h3", { text: "동기화 방식" });
+
+        new Setting(containerEl)
+            .setName("Pull 방식")
+            .setDesc(
+                "Merge: 변경사항을 병합합니다 (기본값, 충돌 가능).\n" +
+                "Rebase: 로컬 커밋을 원격 위에 재배치합니다.\n" +
+                "Reset: 로컬 변경사항을 무시하고 원격으로 덮어씁니다."
+            )
+            .addDropdown((dropdown) =>
+                dropdown
+                    .addOption("merge", "Merge")
+                    .addOption("rebase", "Rebase")
+                    .addOption("reset", "Reset (강제 덮어쓰기)")
+                    .setValue(this.plugin.settings.syncMethod)
+                    .onChange(async (value) => {
+                        this.plugin.settings.syncMethod = value as "merge" | "rebase" | "reset";
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        // ── 상태 표시바 ──────────────────────────────────────────
+        containerEl.createEl("h3", { text: "상태 표시바" });
+
+        new Setting(containerEl)
+            .setName("상태 표시바 표시")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.showStatusBar)
+                    .onChange(async (value) => {
+                        this.plugin.settings.showStatusBar = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("변경 파일 수 표시")
+            .setDesc("상태 표시바에 변경된 파일 수를 함께 표시합니다.")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.showChangedFilesCount)
+                    .onChange(async (value) => {
+                        this.plugin.settings.showChangedFilesCount = value;
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        // ── 고급 ──────────────────────────────────────────────
+        containerEl.createEl("h3", { text: "고급" });
+
+        new Setting(containerEl)
+            .setName("Git 저장소 경로")
+            .setDesc("Vault 내 Git 저장소의 상대 경로. 비어있으면 Vault 루트를 사용합니다.")
+            .addText((text) =>
+                text
+                    .setPlaceholder("예: notes")
+                    .setValue(this.plugin.settings.basePath)
+                    .onChange(async (value) => {
+                        this.plugin.settings.basePath = value.trim();
+                        await this.plugin.saveSettings();
+                        await this.plugin.gitManager.init();
+                    })
+            );
+
+        new Setting(containerEl)
+            .setName("Git 실행 파일 경로")
+            .setDesc("Git 실행 파일의 절대 경로. 비어있으면 시스템 기본값(git)을 사용합니다.")
+            .addText((text) =>
+                text
+                    .setPlaceholder("예: /usr/bin/git")
+                    .setValue(this.plugin.settings.gitExecutablePath)
+                    .onChange(async (value) => {
+                        this.plugin.settings.gitExecutablePath = value.trim();
+                        await this.plugin.saveSettings();
+                        await this.plugin.gitManager.init();
+                    })
+            );
+    }
+}

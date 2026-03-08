@@ -1,0 +1,136 @@
+import { FileSystemAdapter, moment } from "obsidian";
+import simpleGit from "simple-git";
+import type { SimpleGit } from "simple-git";
+import type MyGitSync from "./main";
+import type { ConflictFile } from "./types";
+
+export class GitManager {
+    private git!: SimpleGit;
+    private repoPath!: string;
+
+    constructor(private readonly plugin: MyGitSync) {}
+
+    async init(): Promise<void> {
+        const adapter = this.plugin.app.vault.adapter;
+        if (!(adapter instanceof FileSystemAdapter)) {
+            throw new Error("데스크탑 환경에서만 사용 가능합니다.");
+        }
+
+        const vaultPath = adapter.getBasePath();
+        this.repoPath = this.plugin.settings.basePath
+            ? `${vaultPath}/${this.plugin.settings.basePath}`
+            : vaultPath;
+
+        this.git = simpleGit({
+            baseDir: this.repoPath,
+            binary: this.plugin.settings.gitExecutablePath || "git",
+            maxConcurrentProcesses: 1,
+        });
+    }
+
+    /** git 저장소가 유효한지 확인 */
+    async isRepo(): Promise<boolean> {
+        try {
+            await this.git.status();
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    /** 변경사항이 있는지 확인 */
+    async hasChanges(): Promise<boolean> {
+        const status = await this.git.status();
+        return !status.isClean();
+    }
+
+    /** 충돌 파일 목록 반환 */
+    async getConflicts(): Promise<ConflictFile[]> {
+        const status = await this.git.status();
+        const result: ConflictFile[] = [];
+
+        for (const repoPath of status.conflicted) {
+            const vaultPath = this.plugin.settings.basePath
+                ? `${this.plugin.settings.basePath}/${repoPath}`
+                : repoPath;
+            try {
+                const content = await this.plugin.app.vault.adapter.read(vaultPath);
+                result.push({ vaultPath, repoPath, content });
+            } catch (e) {
+                console.error(`[my-git-sync] 충돌 파일 읽기 실패: ${repoPath}`, e);
+            }
+        }
+
+        return result;
+    }
+
+    /** 변경된 파일 수 반환 */
+    async getChangedFilesCount(): Promise<number> {
+        const status = await this.git.status();
+        return status.files.length;
+    }
+
+    /** 전체 변경사항 스테이징 */
+    async stageAll(): Promise<void> {
+        await this.git.add(".");
+    }
+
+    /** 특정 파일 스테이징 */
+    async stageFile(repoPath: string): Promise<void> {
+        await this.git.add(repoPath);
+    }
+
+    /** 커밋 */
+    async commit(message: string): Promise<void> {
+        await this.git.commit(message);
+    }
+
+    /**
+     * Pull.
+     * 충돌 발생 시 simple-git이 예외를 던진다.
+     * 호출부에서 catch 후 getConflicts()로 충돌 파일을 확인해야 한다.
+     */
+    async pull(method: "merge" | "rebase" | "reset"): Promise<void> {
+        if (method === "rebase") {
+            await this.git.raw(["pull", "--rebase"]);
+        } else if (method === "reset") {
+            await this.git.raw(["fetch"]);
+            await this.git.raw(["reset", "--hard", "FETCH_HEAD"]);
+        } else {
+            await this.git.pull();
+        }
+    }
+
+    /** Push */
+    async push(): Promise<void> {
+        await this.git.push();
+    }
+
+    /** 마지막 커밋 시각 */
+    async getLastCommitTime(): Promise<Date | undefined> {
+        try {
+            const log = await this.git.log({ maxCount: 1 });
+            if (log.latest) {
+                return new Date(log.latest.date);
+            }
+        } catch {
+            // 커밋이 없는 저장소
+        }
+        return undefined;
+    }
+
+    /** 원격에 아직 올리지 않은 커밋 수 */
+    async getUnpushedCount(): Promise<number> {
+        try {
+            const log = await this.git.log(["@{u}..HEAD"]);
+            return log.total;
+        } catch {
+            return 0;
+        }
+    }
+
+    /** 커밋 메시지 템플릿의 {{date}} 치환 */
+    formatCommitMessage(template: string): string {
+        return template.replace("{{date}}", moment().format("YYYY-MM-DD HH:mm:ss"));
+    }
+}

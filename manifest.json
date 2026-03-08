@@ -1,0 +1,10 @@
+{
+  "id": "lemon-git-sync",
+  "name": "@lemon/git-sync",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "Git을 이용한 Sync 프로그램",
+  "author": "lemon",
+  "authorUrl": "https://github.com/Lemon-Obsidian/git-sync",
+  "isDesktopOnly": true
+}
