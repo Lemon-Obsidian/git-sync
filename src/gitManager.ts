@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { FileSystemAdapter, Notice, moment } from "obsidian";
 import simpleGit from "simple-git";
 import type { SimpleGit } from "simple-git";
@@ -49,14 +49,12 @@ export class GitManager {
         }
     }
 
-    /** rebase 진행 중인지 확인 */
-    async isRebasing(): Promise<boolean> {
-        try {
-            const result = await this.git.raw(["status"]);
-            return result.includes("rebase in progress") || result.includes("rebasing");
-        } catch {
-            return false;
-        }
+    /** rebase 진행 중인지 확인 (.git/rebase-merge 또는 .git/rebase-apply 디렉토리 존재 여부) */
+    isRebasing(): boolean {
+        return (
+            existsSync(`${this.repoPath}/.git/rebase-merge`) ||
+            existsSync(`${this.repoPath}/.git/rebase-apply`)
+        );
     }
 
     /** 변경사항이 있는지 확인 */
@@ -127,7 +125,7 @@ export class GitManager {
         const defaultBranch = this.plugin.settings.defaultBranch;
 
         // rebase 진행 중이면 abort 후 기본 브랜치로 복귀
-        if (await this.isRebasing()) {
+        if (this.isRebasing()) {
             new Notice(`⚠️ Rebase 진행 중 감지 — 중단 후 '${defaultBranch}' 브랜치로 복귀합니다.`);
             await this.git.raw(["rebase", "--abort"]);
             await this.git.checkout(defaultBranch);
