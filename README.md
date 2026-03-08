@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.3.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.4.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -103,6 +103,7 @@ Pull 중 병합 충돌이 감지되면:
 
 | 항목 | 설명 | 기본값 |
 |------|------|--------|
+| 기본 브랜치 | Push 및 동기화에 사용할 브랜치. detached HEAD 시 폴백으로도 사용 | `main` |
 | Git 저장소 경로 | Vault 내 Git 저장소의 상대 경로. 비어있으면 Vault 루트 사용 | (비어있음) |
 | Git 실행 파일 경로 | Git 바이너리 절대 경로. 비어있으면 시스템 기본값(`git`) 사용 | (비어있음) |
 
