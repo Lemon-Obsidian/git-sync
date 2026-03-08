@@ -1,6 +1,6 @@
 {
   "name": "@lemon/git-sync",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "description": "Git Sync Plugin With Minimum Features",
   "license": "MIT",
   "main": "main.js",

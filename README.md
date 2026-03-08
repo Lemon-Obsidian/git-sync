@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.13.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.13.1-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -209,6 +209,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.13.1** | pull 시 `origin <branch>` 명시적 지정 — 추적 브랜치 미설정 시 fetch 누락으로 인한 non-fast-forward 반복 수정 |
 | **1.13.0** | 충돌 해결 뷰 3-way 레이아웃으로 재설계 — 좌(로컬) · 중(결과편집) · 우(원격) |
 | **1.12.3** | push non-fast-forward 실패 시 pull 후 자동 재시도 |
 | **1.12.2** | pull 실패/충돌 시 push 자동 스킵 — non-fast-forward 후 push 시도하던 문제 수정 |
