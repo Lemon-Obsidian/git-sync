@@ -9,6 +9,7 @@ import { addCommands } from "./commands";
 import { SyncSettingTab } from "./setting/settings";
 import { GitState } from "./types";
 import type { ConflictFile, PluginSettings } from "./types";
+import { showError } from "./errorModal";
 
 export default class MyGitSync extends Plugin {
     settings!: PluginSettings;
@@ -42,7 +43,7 @@ export default class MyGitSync extends Plugin {
         try {
             await this.gitManager.init();
         } catch (e) {
-            new Notice(`[Git 동기화] 초기화 실패: ${e}`);
+            showError(this, "초기화 실패", e);
             return;
         }
 
@@ -96,7 +97,7 @@ export default class MyGitSync extends Plugin {
         }
 
         if (pullError) {
-            new Notice(`Pull 실패: ${pullError}`);
+            showError(this, "Pull 실패", pullError);
             this.state = GitState.Idle;
             return;
         }
@@ -113,7 +114,7 @@ export default class MyGitSync extends Plugin {
             new Notice("✓ Push 완료");
             this.state = GitState.Idle;
         } catch (e) {
-            new Notice(`Push 실패: ${e}`);
+            showError(this, "Push 실패", e);
             this.state = GitState.Idle;
         }
     }
@@ -134,7 +135,7 @@ export default class MyGitSync extends Plugin {
             new Notice("✓ 커밋 완료");
             this.state = GitState.Idle;
         } catch (e) {
-            new Notice(`커밋 실패: ${e}`);
+            showError(this, "커밋 실패", e);
             this.state = GitState.Idle;
         }
     }
@@ -152,7 +153,7 @@ export default class MyGitSync extends Plugin {
 
             await this.push();
         } catch (e) {
-            new Notice(`커밋 & Push 실패: ${e}`);
+            showError(this, "커밋 & Push 실패", e);
             if (this.state !== GitState.Conflict) {
                 this.state = GitState.Idle;
             }
@@ -176,7 +177,7 @@ export default class MyGitSync extends Plugin {
 
             await this.push();
         } catch (e) {
-            new Notice(`전체 동기화 실패: ${e}`);
+            showError(this, "전체 동기화 실패", e);
             if (this.state !== GitState.Conflict) {
                 this.state = GitState.Idle;
             }
@@ -200,7 +201,7 @@ export default class MyGitSync extends Plugin {
 
             await this.push();
         } catch (e) {
-            new Notice(`동기화 실패: ${e}`);
+            showError(this, "동기화 실패", e);
             if (this.state !== GitState.Conflict) {
                 this.state = GitState.Idle;
             }
@@ -273,7 +274,7 @@ export default class MyGitSync extends Plugin {
                 leaf.detach();
             }
         } catch (e) {
-            new Notice(`충돌 해결 후 처리 실패: ${e}`);
+            showError(this, "충돌 해결 후 처리 실패", e);
         }
     }
 

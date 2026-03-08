@@ -1,3 +1,63 @@
+/* ── 에러 모달 ─────────────────────────────────────── */
+.my-git-sync-error-modal {
+    padding: 4px;
+}
+
+.my-git-sync-error-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.my-git-sync-error-badge {
+    font-size: 0.65em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-red);
+    background: rgba(var(--color-red-rgb), 0.12);
+    border: 1px solid rgba(var(--color-red-rgb), 0.3);
+    border-radius: 4px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+}
+
+.my-git-sync-error-header h4 {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.my-git-sync-error-body {
+    background: var(--background-secondary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.my-git-sync-error-text {
+    margin: 0;
+    font-family: var(--font-monospace);
+    font-size: 0.8em;
+    line-height: 1.6;
+    color: var(--text-normal);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.my-git-sync-error-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.my-git-sync-error-copy-btn {
+    min-width: 130px;
+}
+
 /* ── 상태 표시바 ───────────────────────────────────── */
 .my-git-sync-statusbar {
     display: flex;
