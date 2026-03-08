@@ -49,6 +49,26 @@
     word-break: break-all;
 }
 
+/* ── 패널 레이블 ────────────────────────────────────── */
+.my-git-sync-merge-labels {
+    flex-shrink: 0;
+    display: flex;
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.my-git-sync-merge-label {
+    flex: 1;
+    padding: 4px 12px;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.my-git-sync-merge-label:first-child {
+    border-right: 1px solid var(--background-modifier-border);
+}
+
 /* ── 에디터 영역 ────────────────────────────────────── */
 .my-git-sync-merge-editor {
     flex: 1;
@@ -56,11 +76,23 @@
     min-height: 0;
 }
 
+/* cm-mergeView: 좌우 패널 동일 너비 */
+.my-git-sync-merge-editor .cm-mergeView {
+    height: 100%;
+    display: flex;
+}
+
+.my-git-sync-merge-editor .cm-mergeViewEditor {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+}
+
 .my-git-sync-merge-editor .cm-editor {
     height: 100%;
 }
 
-/* 충돌 섹션 하이라이트 (codemirror/merge 기본 스타일 보완) */
+/* 충돌 섹션 하이라이트 */
 .my-git-sync-merge-editor .cm-deletedChunk {
     background-color: rgba(255, 80, 80, 0.15);
 }
