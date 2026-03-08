@@ -136,6 +136,19 @@ export class SyncSettingTab extends PluginSettingTab {
         containerEl.createEl("h3", { text: "고급" });
 
         new Setting(containerEl)
+            .setName("기본 브랜치")
+            .setDesc("Push 및 동기화에 사용할 기본 브랜치 이름.")
+            .addText((text) =>
+                text
+                    .setPlaceholder("main")
+                    .setValue(this.plugin.settings.defaultBranch)
+                    .onChange(async (value) => {
+                        this.plugin.settings.defaultBranch = value.trim() || "main";
+                        await this.plugin.saveSettings();
+                    })
+            );
+
+        new Setting(containerEl)
             .setName("Git 저장소 경로")
             .setDesc("Vault 내 Git 저장소의 상대 경로. 비어있으면 Vault 루트를 사용합니다.")
             .addText((text) =>

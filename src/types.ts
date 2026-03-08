@@ -16,6 +16,7 @@ export interface PluginSettings {
     debounceDelay: number;      // 초, 0이면 비활성화
 
     // 고급
+    defaultBranch: string;      // 동기화할 기본 브랜치
     basePath: string;           // vault 내 git 저장소 상대 경로 (비어있으면 vault 루트)
     gitExecutablePath: string;  // git 실행 파일 경로
 }

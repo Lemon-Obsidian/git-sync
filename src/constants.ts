@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
     showStatusBar: true,
     showChangedFilesCount: true,
     debounceDelay: 30,
+    defaultBranch: "main",
     basePath: "",
     gitExecutablePath: "",
 };

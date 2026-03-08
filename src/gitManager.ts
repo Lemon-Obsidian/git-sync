@@ -104,8 +104,7 @@ export class GitManager {
         if (method === "rebase") {
             await this.git.raw(["pull", "--rebase"]);
         } else if (method === "reset") {
-            const branch = await this.getCurrentBranch();
-            if (!branch) throw new Error("현재 브랜치를 찾을 수 없습니다 (detached HEAD 상태).");
+            const branch = await this.getCurrentBranch() ?? this.plugin.settings.defaultBranch;
             await this.git.raw(["fetch"]);
             await this.git.raw(["reset", "--hard", `origin/${branch}`]);
         } else {
@@ -115,14 +114,8 @@ export class GitManager {
 
     /** Push */
     async push(): Promise<void> {
-        const branch = await this.getCurrentBranch();
-        if (!branch) {
-            throw new Error(
-                "현재 브랜치를 찾을 수 없습니다 (detached HEAD 상태). " +
-                "터미널에서 'git checkout <브랜치명>'으로 브랜치를 선택한 후 다시 시도하세요."
-            );
-        }
-        await this.git.push();
+        const branch = await this.getCurrentBranch() ?? this.plugin.settings.defaultBranch;
+        await this.git.push("origin", branch);
     }
 
     /** 마지막 커밋 시각 */
