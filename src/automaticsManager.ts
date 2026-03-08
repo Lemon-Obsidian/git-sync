@@ -108,10 +108,9 @@ export class AutomaticsManager {
         this.plugin.gitManager
           .stageAll()
           .then(() => {
-            const msg = this.plugin.gitManager.formatCommitMessage(
+            return this.plugin.gitManager.buildCommitMessage(
               this.plugin.settings.commitMessage
-            );
-            return this.plugin.gitManager.commit(msg);
+            ).then((msg) => this.plugin.gitManager.commit(msg));
           })
           .then(() => this.plugin.push())
           .catch((err) => {

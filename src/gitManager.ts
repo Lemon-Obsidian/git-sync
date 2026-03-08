@@ -183,4 +183,27 @@ export class GitManager {
     formatCommitMessage(template: string): string {
         return template.replace("{{date}}", moment().format("YYYY-MM-DD HH:mm:ss"));
     }
+
+    /** 변경 파일 목록을 포함한 커밋 메시지 생성 */
+    async buildCommitMessage(template: string): Promise<string> {
+        const header = this.formatCommitMessage(template);
+        const status = await this.git.status();
+
+        const lines: string[] = [];
+        for (const f of status.files) {
+            if (f.index === "R") {
+                lines.push(`이름변경 ${f.from} → ${f.path}`);
+            } else if (f.index === "A" || f.index === "?") {
+                lines.push(`추가 ${f.path}`);
+            } else if (f.index === "D") {
+                lines.push(`삭제 ${f.path}`);
+            } else {
+                lines.push(`수정 ${f.path}`);
+            }
+        }
+
+        return lines.length > 0
+            ? `${header}\n\n${lines.join("\n")}`
+            : header;
+    }
 }

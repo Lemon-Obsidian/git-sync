@@ -151,7 +151,7 @@ export default class MyGitSync extends Plugin {
                 return;
             }
             await this.gitManager.stageAll();
-            const msg = message ?? this.gitManager.formatCommitMessage(this.settings.commitMessage);
+            const msg = message ?? await this.gitManager.buildCommitMessage(this.settings.commitMessage);
             await this.gitManager.commit(msg);
             await this.refreshChangedFilesCount();
             new Notice("✓ 커밋 완료");
