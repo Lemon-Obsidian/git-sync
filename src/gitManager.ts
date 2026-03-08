@@ -1,3 +1,4 @@
+import { readFileSync } from "fs";
 import { FileSystemAdapter, moment } from "obsidian";
 import simpleGit from "simple-git";
 import type { SimpleGit } from "simple-git";
@@ -63,11 +64,23 @@ export class GitManager {
             const vaultPath = this.plugin.settings.basePath
                 ? `${this.plugin.settings.basePath}/${repoPath}`
                 : repoPath;
+
+            let content: string | null = null;
+
+            // 1차: vault adapter
             try {
-                const content = await this.plugin.app.vault.adapter.read(vaultPath);
+                content = await this.plugin.app.vault.adapter.read(vaultPath);
+            } catch {
+                // 2차: 파일시스템 직접 읽기
+                try {
+                    content = readFileSync(`${this.repoPath}/${repoPath}`, "utf8");
+                } catch (e2) {
+                    console.error(`[my-git-sync] 충돌 파일 읽기 실패: ${repoPath}`, e2);
+                }
+            }
+
+            if (content !== null) {
                 result.push({ vaultPath, repoPath, content });
-            } catch (e) {
-                console.error(`[my-git-sync] 충돌 파일 읽기 실패: ${repoPath}`, e);
             }
         }
 

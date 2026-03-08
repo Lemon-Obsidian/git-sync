@@ -80,22 +80,30 @@ export default class MyGitSync extends Plugin {
 
     async pull(): Promise<void> {
         this.state = GitState.Pulling;
+        let pullError: unknown = null;
+
         try {
             await this.gitManager.pull(this.settings.syncMethod);
-            await this.refreshChangedFilesCount();
-            new Notice("✓ Pull 완료");
-            this.state = GitState.Idle;
         } catch (e) {
-            // Pull 실패 시 충돌 여부 즉시 확인
-            const conflicts = await this.gitManager.getConflicts();
-            if (conflicts.length > 0) {
-                await this.handleConflict(conflicts);
-                // state는 handleConflict 내부에서 Conflict로 설정됨
-            } else {
-                new Notice(`Pull 실패: ${e}`);
-                this.state = GitState.Idle;
-            }
+            pullError = e;
         }
+
+        // 성공/실패 관계없이 항상 충돌 확인 (rebase 방식은 예외를 던지지 않는 경우도 있음)
+        const conflicts = await this.gitManager.getConflicts();
+        if (conflicts.length > 0) {
+            await this.handleConflict(conflicts);
+            return;
+        }
+
+        if (pullError) {
+            new Notice(`Pull 실패: ${pullError}`);
+            this.state = GitState.Idle;
+            return;
+        }
+
+        await this.refreshChangedFilesCount();
+        new Notice("✓ Pull 완료");
+        this.state = GitState.Idle;
     }
 
     async push(): Promise<void> {
