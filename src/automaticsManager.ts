@@ -88,13 +88,20 @@ export class AutomaticsManager {
 
   private registerBeforeUnload(): void {
     this.beforeUnloadHandler = (e: BeforeUnloadEvent) => {
-      // 변경사항이 없으면 바로 종료
-      this.plugin.gitManager.hasChanges().then((hasChanges) => {
-        if (!hasChanges) return;
+      // 동기적으로 즉시 차단 (비동기 콜백 안에서 호출하면 Electron이 무시함)
+      e.preventDefault();
+      e.returnValue = "";
 
-        // 창 닫기 차단 후 commit & push 시도
-        e.preventDefault();
-        e.returnValue = "";
+      this.plugin.gitManager.hasChanges().then((hasChanges) => {
+        if (this.beforeUnloadHandler) {
+          window.removeEventListener("beforeunload", this.beforeUnloadHandler);
+          this.beforeUnloadHandler = undefined;
+        }
+
+        if (!hasChanges) {
+          window.close();
+          return;
+        }
 
         new Notice("⏳ 종료 전 변경사항을 저장하는 중...", 0);
 
@@ -117,10 +124,6 @@ export class AutomaticsManager {
             new Notice(`⚠️ 종료 저장 실패: ${err}`);
           })
           .finally(() => {
-            if (this.beforeUnloadHandler) {
-              window.removeEventListener("beforeunload", this.beforeUnloadHandler);
-              this.beforeUnloadHandler = undefined;
-            }
             window.close();
           });
       });
