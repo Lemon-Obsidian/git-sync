@@ -1,5 +1,5 @@
 import { readFileSync } from "fs";
-import { FileSystemAdapter, moment } from "obsidian";
+import { FileSystemAdapter, Notice, moment } from "obsidian";
 import simpleGit from "simple-git";
 import type { SimpleGit } from "simple-git";
 import type MyGitSync from "./main";
@@ -114,6 +114,14 @@ export class GitManager {
      * 호출부에서 catch 후 getConflicts()로 충돌 파일을 확인해야 한다.
      */
     async pull(method: "merge" | "rebase" | "reset"): Promise<void> {
+        // detached HEAD 상태면 기본 브랜치로 복귀 후 진행
+        const currentBranch = await this.getCurrentBranch();
+        if (!currentBranch) {
+            const defaultBranch = this.plugin.settings.defaultBranch;
+            new Notice(`⚠️ Detached HEAD 감지 — '${defaultBranch}' 브랜치로 복귀합니다.`);
+            await this.git.checkout(defaultBranch);
+        }
+
         if (method === "rebase") {
             await this.git.raw(["pull", "--rebase"]);
         } else if (method === "reset") {
