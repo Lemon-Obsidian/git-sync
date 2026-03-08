@@ -4,9 +4,9 @@
 
 **Obsidian용 Git 동기화 플러그인**
 
-자동 커밋 · 자동 Pull · Push · 충돌 해결 뷰 · 상태 표시바
+파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.0.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.1.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -18,6 +18,8 @@
 
 | 기능 | 설명 |
 |------|------|
+| 📝 **파일 변경 감지 자동 커밋** | 파일 생성/수정/삭제 후 N초 debounce 대기 → 자동 커밋 & 동기화 |
+| 🚪 **종료 시 자동 저장** | X 버튼으로 닫을 때 변경사항을 commit & push 후 종료 |
 | 🔄 **자동 커밋 & 동기화** | 설정한 간격마다 자동으로 커밋 → Pull → Push 실행 |
 | ⬇️ **자동 Pull** | 설정한 간격마다 원격 저장소에서 변경사항 자동 수신 |
 | 🚀 **시작 시 Pull** | Obsidian 시작 시 자동으로 최신 상태로 갱신 |
@@ -53,9 +55,8 @@
 | 명령어 | 설명 |
 |--------|------|
 | `풀 (Pull)` | 원격 저장소에서 변경사항 수신 |
-| `푸시 (Push)` | 로컬 커밋을 원격 저장소에 업로드 |
-| `커밋 (Commit)` | 변경사항을 로컬에 커밋 |
-| `커밋하고 동기화` | 커밋 → Pull → Push 순서로 전체 동기화 |
+| `커밋하고 Push` | 변경사항을 커밋 후 원격 저장소에 Push |
+| `전체 동기화 (Pull → 커밋 → Push)` | Pull → 커밋 → Push 순서로 전체 동기화 |
 | `자동 루틴 일시정지 / 재개` | 자동 커밋 · Pull 타이머 토글 |
 
 ### 충돌 해결
@@ -81,6 +82,7 @@ Pull 중 병합 충돌이 감지되면:
 | 자동 커밋 간격 (분) | N분마다 커밋 & 동기화. 0이면 비활성화 | 5 |
 | 자동 Pull 간격 (분) | N분마다 Pull. 0이면 비활성화 | 10 |
 | 커밋 메시지 | 커밋 메시지 템플릿. `{{date}}`는 현재 날짜/시간으로 대체 | `vault 백업: {{date}}` |
+| 파일 변경 시 자동 커밋 지연 (초) | 파일 생성/수정/삭제 후 N초 debounce 대기 → 자동 커밋 & 동기화. 0이면 비활성화 | 30 |
 
 ### 동기화 방식
 
