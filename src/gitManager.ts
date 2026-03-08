@@ -143,8 +143,11 @@ export class GitManager {
 
     /** Push */
     async push(): Promise<void> {
-        const branch = await this.getCurrentBranch() ?? this.plugin.settings.defaultBranch;
-        await this.git.push("origin", branch);
+        const branch = await this.getCurrentBranch();
+        const target = (branch && branch !== "HEAD")
+            ? branch
+            : this.plugin.settings.defaultBranch;
+        await this.git.push("origin", target);
     }
 
     /** 마지막 커밋 시각 */
