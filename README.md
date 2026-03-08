@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.6.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.7.0-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -108,9 +108,9 @@ Pull 중 병합 충돌 감지
 
 | 명령어 | 설명 |
 |--------|------|
-| `pull (풀)` | 원격 저장소에서 변경사항 수신 |
-| `commit-push (커밋하고 Push)` | 변경사항 커밋 후 원격 저장소에 Push |
-| `full-sync (전체 동기화)` | Pull → 커밋 → Push 순서로 전체 동기화 |
+| `pull (pull)` | 원격 저장소에서 변경사항 수신 |
+| `commit-push (commit -> push)` | 변경사항 커밋 후 원격 저장소에 Push |
+| `full-sync (전체 동기화, pull -> commit -> push)` | Pull → 커밋 → Push 순서로 전체 동기화 |
 | `자동 루틴 일시정지 / 재개` | 자동 커밋 · Pull 타이머 토글 |
 
 ### 상태 표시바
@@ -212,6 +212,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.7.0** | 커맨드 팔레트 표시 이름 재수정 (`full-sync` / `commit-push` / `pull`) |
 | **1.6.0** | 커맨드 팔레트 표시 이름 변경 (`pull` / `commit-push` / `full-sync`) |
 | **1.5.0** | pull 실패 시 충돌 해결 뷰 미표시 버그 수정 · `getConflicts()` 파일 읽기 폴백 추가 |
 | **1.4.0** | 기본 브랜치 설정 추가 (기본값: `main`) · detached HEAD 시 설정 브랜치로 폴백 |
