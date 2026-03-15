@@ -166,12 +166,12 @@ export default class MyGitSync extends Plugin {
     async commitAndPush(): Promise<void> {
         try {
             const hasChanges = await this.gitManager.hasChanges();
-            if (!hasChanges) {
+            if (hasChanges) {
+                await this.commit();
+                if (this.state === GitState.Conflict) return;
+            } else {
                 new Notice("커밋할 변경사항이 없습니다.");
-                return;
             }
-            await this.commit();
-            if (this.state === GitState.Conflict) return;
 
             await this.push();
         } catch (e) {
