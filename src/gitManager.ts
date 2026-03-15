@@ -26,6 +26,7 @@ export class GitManager {
             baseDir: this.repoPath,
             binary: this.plugin.settings.gitExecutablePath || "git",
             maxConcurrentProcesses: 1,
+            timeout: { block: 60_000 },
         });
     }
 
@@ -210,8 +211,10 @@ export class GitManager {
         const header = this.formatCommitMessage(template);
         const status = await this.git.status();
 
+        const MAX_FILES = 20;
         const lines: string[] = [];
         for (const f of status.files) {
+            if (lines.length >= MAX_FILES) break;
             if (f.index === "R") {
                 lines.push(`이름변경 ${f.from} → ${f.path}`);
             } else if (f.index === "A" || f.index === "?") {
@@ -221,6 +224,11 @@ export class GitManager {
             } else {
                 lines.push(`수정 ${f.path}`);
             }
+        }
+
+        const remaining = status.files.length - lines.length;
+        if (remaining > 0) {
+            lines.push(`외 ${remaining}개`);
         }
 
         return lines.length > 0
