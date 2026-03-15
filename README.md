@@ -6,7 +6,7 @@
 
 파일 변경 감지 자동 커밋 · 종료 시 자동 저장 · 자동 Pull · 충돌 해결 뷰 · 상태 표시바
 
-[![Release](https://img.shields.io/badge/release-1.16.1-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
+[![Release](https://img.shields.io/badge/release-1.16.2-6c63ff?style=flat-square)](https://github.com/Lemon-Obsidian/git-sync/releases/latest)
 [![Obsidian](https://img.shields.io/badge/Obsidian-1.4%2B-7c3aed?style=flat-square&logo=obsidian&logoColor=white)](https://obsidian.md)
 [![License](https://img.shields.io/github/license/Lemon-Obsidian/git-sync?style=flat-square&color=10b981)](LICENSE)
 
@@ -211,6 +211,7 @@ manifest.json             # 플러그인 메타 (id: lemon-git-sync)
 
 | 버전 | 주요 변경 |
 |------|-----------|
+| **1.16.2** | 대용량 변경사항 대응 — git 작업 타임아웃 60초 설정 · 커밋 메시지 파일 목록 최대 20개 제한 (초과 시 "외 N개" 요약) |
 | **1.16.1** | 종료 시 실행 중인 git 작업 완료 대기 → Pull 실패 Notice 방지 (`promiseQueue.clear()` + `waitForIdle()` 추가) |
 | **1.16.0** | push 전용 커맨드 추가 · 연결 진단 모달 추가 (Git·저장소·Remote·브랜치·인증 점검) · 설정 탭에 진단 버튼 추가 |
 | **1.15.0** | 커밋 메시지에 변경 파일 목록 추가 — 수정 / 추가 / 삭제 / 이름변경 파일을 한글 레이블로 표시 |
